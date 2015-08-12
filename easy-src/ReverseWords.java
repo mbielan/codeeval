@@ -1,4 +1,7 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ReverseWords {
     public static void main (String[] args) throws IOException {
@@ -15,7 +18,7 @@ public class ReverseWords {
 
     private static String reverseSentence(String sentence) {
         String[] words = sentence.split(" ");
-        StringBuffer sb = new StringBuffer(sentence.length());
+        StringBuilder sb = new StringBuilder(sentence.length());
         for (int i = 0; i < words.length; i++) {
             String word = words[words.length - i - 1];
             if (!word.isEmpty()) {
