@@ -12,5 +12,7 @@ public @interface CodeEvalTestData {
 
     String[] input() default {};
 
-    String[] expectedOutput() default {};
+    String[] expectedOutput();
+
+    String inputFile() default "";
 }

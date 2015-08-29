@@ -35,9 +35,6 @@ public abstract class AbstractCodeEvalTest {
 
     @Test
     public void testMain() throws Exception {
-        Assume.assumeTrue("No input in @CodeEvalTestData", testData.input().length > 0);
-        Assume.assumeTrue("No expectedOutput in @CodeEvalTestData", testData.expectedOutput().length > 0);
-
         Method method = testData.testClass().getDeclaredMethod("main", String[].class);
 
         long execStart = System.currentTimeMillis();
@@ -78,10 +75,21 @@ public abstract class AbstractCodeEvalTest {
     }
 
     private void setUpTmpFile() throws IOException {
-        inputFile = File.createTempFile("codeeval", ".tmp");
+        Assume.assumeTrue("No input/inputFile in @CodeEvalTestData",
+                testData.input().length > 0 || !testData.inputFile().isEmpty());
+
+        if (!testData.inputFile().isEmpty()) {
+            inputFile = new File(getClass().getClassLoader().getResource(testData.inputFile()).getFile());
+        } else {
+            inputFile = File.createTempFile("codeeval", ".tmp");
+        }
     }
 
     private void setUpTmpFileContent() throws IOException {
+        if (!testData.inputFile().isEmpty()) {
+            return;
+        }
+
         try (
             PrintWriter writer = new PrintWriter(inputFile, "UTF-8")
         ){
