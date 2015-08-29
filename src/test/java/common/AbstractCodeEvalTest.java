@@ -18,38 +18,45 @@ public abstract class AbstractCodeEvalTest {
 
     private File inputFile;
 
-    private CodeEvalTestData testData;
+    protected CodeEvalTestData testData;
 
     @Rule
     public TestName testName = new TestName();
 
     @Before
     public void setUp() throws IOException {
+        setUpTestData();
         if (isTestMainExecuted()) {
-            setUpTestData();
-            setUpTmpFile();
-            setUpTmpFileContent();
+            setUpInputFile();
+            setUpInputFileContent();
             setUpSystemOut();
         }
     }
 
     @Test
     public void testMain() throws Exception {
+        //When
         Method method = testData.testClass().getDeclaredMethod("main", String[].class);
 
         long execStart = System.currentTimeMillis();
 
+        //Then
         method.invoke(null, getArgs());
 
-        long execEnd = System.currentTimeMillis();
+        //Verify
+        long execTime = System.currentTimeMillis() - execStart;
         long usedMemory = getUsedMemory();
 
-        sout.println("Exec time [s]: " + (execEnd - execStart) / SEK);
-        sout.println("Mem used [MB]: " + usedMemory / MB);
+        log(execTime, usedMemory);
 
-        Assert.assertTrue("Execution was too long", execEnd - execStart < MAX_EXEC_TIME);
+        Assert.assertTrue("Execution was too long", execTime < MAX_EXEC_TIME);
         Assert.assertTrue("Memory usage too big", usedMemory < MAX_MEMORY_USAGE);
         Assert.assertArrayEquals(testData.expectedOutput(), getActualOutput());
+    }
+
+    private void log(long execTime, long usedMemory) {
+        sout.println("Exec time [s]: " + execTime / SEK);
+        sout.println("Mem used [MB]: " + usedMemory / MB);
     }
 
     @After
@@ -63,7 +70,7 @@ public abstract class AbstractCodeEvalTest {
     }
 
     private boolean isTempFile() {
-        return inputFile != null && testData.inputFile().isEmpty();
+        return inputFile != null && !isInputFileProvided();
     }
 
     private boolean isTestMainExecuted() {
@@ -78,19 +85,23 @@ public abstract class AbstractCodeEvalTest {
         }
     }
 
-    private void setUpTmpFile() throws IOException {
+    private void setUpInputFile() throws IOException {
         Assume.assumeTrue("No input/inputFile in @CodeEvalTestData",
-                testData.input().length > 0 || !testData.inputFile().isEmpty());
+                testData.input().length > 0 || isInputFileProvided());
 
-        if (!testData.inputFile().isEmpty()) {
-            inputFile = new File(getClass().getClassLoader().getResource(testData.inputFile()).getFile());
+        if (isInputFileProvided()) {
+            inputFile = getInputFileFromResources(testData.inputFile());
         } else {
             inputFile = File.createTempFile("codeeval", ".tmp");
         }
     }
 
-    private void setUpTmpFileContent() throws IOException {
-        if (!testData.inputFile().isEmpty()) {
+    private File getInputFileFromResources(String file) {
+        return new File(getClass().getClassLoader().getResource(file).getFile());
+    }
+
+    private void setUpInputFileContent() throws IOException {
+        if (isInputFileProvided()) {
             return;
         }
 
@@ -104,6 +115,10 @@ public abstract class AbstractCodeEvalTest {
             }
             writer.print(input[i]);
         }
+    }
+
+    private boolean isInputFileProvided() {
+        return !testData.inputFile().isEmpty();
     }
 
     private void setUpSystemOut() {

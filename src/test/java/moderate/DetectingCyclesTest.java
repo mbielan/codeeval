@@ -26,6 +26,6 @@ public class DetectingCyclesTest extends AbstractCodeEvalTest {
 
     @Test
     public void testSingleCycle() {
-        Assert.assertEquals("6 3 1", DetectingCycles.getCycle("2 0 6 3 1 6 3 1 6 3 1"));
+        Assert.assertEquals(testData.expectedOutput()[0], DetectingCycles.getCycle(testData.input()[0]));
     }
 }
