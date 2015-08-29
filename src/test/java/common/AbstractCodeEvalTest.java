@@ -55,11 +55,15 @@ public abstract class AbstractCodeEvalTest {
     @After
     public void cleanUp() {
         if (isTestMainExecuted()) {
-            if (inputFile != null) {
+            if (isTempFile()) {
                 inputFile.delete();
             }
             System.setOut(sout);
         }
+    }
+
+    private boolean isTempFile() {
+        return inputFile != null && testData.inputFile().isEmpty();
     }
 
     private boolean isTestMainExecuted() {
