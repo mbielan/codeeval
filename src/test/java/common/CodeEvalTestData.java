@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface CodeEvalTest {
+public @interface CodeEvalTestData {
     Class<?> testClass();
 
     String[] input() default {};

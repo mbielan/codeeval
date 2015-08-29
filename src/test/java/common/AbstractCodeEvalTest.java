@@ -17,7 +17,7 @@ public abstract class AbstractCodeEvalTest {
 
     private File inputFile;
 
-    private CodeEvalTest testData;
+    private CodeEvalTestData testData;
 
     @Before
     public void setUp() throws IOException {
@@ -29,8 +29,8 @@ public abstract class AbstractCodeEvalTest {
 
     @Test
     public void testMain() throws Exception {
-        Assume.assumeTrue("No input in @CodeEvalTest", testData.input().length > 0);
-        Assume.assumeTrue("No expectedOutput in @CodeEvalTest", testData.expectedOutput().length > 0);
+        Assume.assumeTrue("No input in @CodeEvalTestData", testData.input().length > 0);
+        Assume.assumeTrue("No expectedOutput in @CodeEvalTestData", testData.expectedOutput().length > 0);
 
         Method method = testData.testClass().getDeclaredMethod("main", String[].class);
 
@@ -58,10 +58,10 @@ public abstract class AbstractCodeEvalTest {
     }
 
     private void setUpTestData() {
-        if (this.getClass().isAnnotationPresent(CodeEvalTest.class)) {
-            testData = this.getClass().getAnnotation(CodeEvalTest.class);
+        if (this.getClass().isAnnotationPresent(CodeEvalTestData.class)) {
+            testData = this.getClass().getAnnotation(CodeEvalTestData.class);
         } else {
-            throw new RuntimeException("Test class need to be annotated with CodeEvalTest.class");
+            throw new RuntimeException("Test class need to be annotated with CodeEvalTestData.class");
         }
     }
 

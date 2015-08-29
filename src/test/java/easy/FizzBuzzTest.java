@@ -1,9 +1,9 @@
 package easy;
 
 import common.AbstractCodeEvalTest;
-import common.CodeEvalTest;
+import common.CodeEvalTestData;
 
-@CodeEvalTest(
+@CodeEvalTestData(
         testClass = FizzBuzz.class,
         input = {
                 "3 5 10",
