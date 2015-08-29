@@ -1,6 +1,7 @@
 package common;
 
 import org.junit.*;
+import org.junit.rules.TestName;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -19,12 +20,17 @@ public abstract class AbstractCodeEvalTest {
 
     private CodeEvalTestData testData;
 
+    @Rule
+    public TestName testName = new TestName();
+
     @Before
     public void setUp() throws IOException {
-        setUpTestData();
-        setUpTmpFile();
-        setUpTmpFileContent();
-        setUpSystemOut();
+        if (isTestMainExecuted()) {
+            setUpTestData();
+            setUpTmpFile();
+            setUpTmpFileContent();
+            setUpSystemOut();
+        }
     }
 
     @Test
@@ -51,10 +57,16 @@ public abstract class AbstractCodeEvalTest {
 
     @After
     public void cleanUp() {
-        if (inputFile != null) {
-            inputFile.delete();
+        if (isTestMainExecuted()) {
+            if (inputFile != null) {
+                inputFile.delete();
+            }
+            System.setOut(sout);
         }
-        System.setOut(sout);
+    }
+
+    private boolean isTestMainExecuted() {
+        return testName.getMethodName().equals("testMain");
     }
 
     private void setUpTestData() {
@@ -95,7 +107,7 @@ public abstract class AbstractCodeEvalTest {
         return outStream.toString().split("\r\n");
     }
 
-    public long getUsedMemory() {
+    private long getUsedMemory() {
         return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
 }
