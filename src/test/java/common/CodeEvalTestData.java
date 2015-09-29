@@ -15,4 +15,6 @@ public @interface CodeEvalTestData {
     String[] expectedOutput();
 
     String inputFile() default "";
+
+    boolean logOutput() default false;
 }

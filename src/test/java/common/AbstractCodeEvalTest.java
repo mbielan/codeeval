@@ -57,6 +57,9 @@ public abstract class AbstractCodeEvalTest {
     private void log(long execTime, long usedMemory) {
         sout.println("Exec time [s]: " + execTime / SEK);
         sout.println("Mem used [MB]: " + usedMemory / MB);
+        if (testData.logOutput()) {
+            sout.println(outStream.toString());
+        }
     }
 
     @After
